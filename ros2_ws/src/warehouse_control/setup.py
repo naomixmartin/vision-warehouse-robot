@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'robot_controller = warehouse_control.robot_controller:main',
         ],
     },
 )
