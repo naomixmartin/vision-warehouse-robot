@@ -17,4 +17,3 @@ ros2_ws/log/
 *.ckpt
 .env
 .env.*
-.venv
