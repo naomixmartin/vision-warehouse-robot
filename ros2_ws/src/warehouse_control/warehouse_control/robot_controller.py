@@ -26,7 +26,7 @@ class RobotController(Node):
         else:
             self.timer.cancel()
 
-        self.publisher.publish(cmd)
+        self.publisher_.publish(cmd)
 
 
 def main(args=None):
