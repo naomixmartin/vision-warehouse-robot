@@ -1,8 +1,8 @@
-
 import os
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.event_handlers import OnProcessExit
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -38,10 +38,25 @@ def generate_launch_description():
         output="screen"
     )
 
-    gui = ExecuteProcess(
-        cmd=["gz", "sim", "-g", "--render-engine", "ogre2"],
+    # Connect ROS 2 velocity commands to Gazebo
+    bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "/model/warehouse_robot/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist"
+        ],
         output="screen"
     )
+
+    # Use a saved camera configuration when available
+    config_path = os.path.join(
+        os.path.dirname(__file__), "..", "config", "warehouse.gui.config"
+    )
+    gui_cmd = ["gz", "sim", "-g", "--render-engine", "ogre2"]
+    if os.path.isfile(config_path):
+        gui_cmd.extend(["--gui-config", config_path])
+
+    gui = ExecuteProcess(cmd=gui_cmd, output="screen")
 
     start_gui = RegisterEventHandler(
         OnProcessExit(
@@ -57,5 +72,6 @@ def generate_launch_description():
         SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", resource_path),
         server,
         robot,
-        start_gui
+        start_gui,
+        bridge
     ])
