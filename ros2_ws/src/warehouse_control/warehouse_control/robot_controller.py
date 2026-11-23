@@ -7,20 +7,13 @@ class RobotController(Node):
     def __init__(self):
         super().__init__("robot_controller")
 
-        self.publisher = self.create_publisher(
-            Twist,
-            "/model/vehicle_blue/cmd_vel",
-            10
-        )
+        self.publisher_ = self.create_publisher(Twist, "/model/warehouse_robot/cmd_vel", 10)
 
         self.start_time = self.get_clock().now()
-
         self.timer = self.create_timer(0.1, self.control_robot)
 
     def control_robot(self):
-        elapsed = (
-            self.get_clock().now() - self.start_time
-        ).nanoseconds / 1e9
+        elapsed = (self.get_clock().now() - self.start_time).nanoseconds / 1e9
 
         cmd = Twist()
 
